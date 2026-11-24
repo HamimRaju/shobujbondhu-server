@@ -2,14 +2,17 @@ import { Router } from "express";
 import {
   createEvent,
   deleteEvent,
+  getEvent,
   getMyEvents,
+  getUpcomingEvents,
   updateEvent,
 } from "../controllers/events.controller";
 import {
+  getEventParticipation,
   getJoinedEvents,
   joinEvent,
 } from "../controllers/joined-events.controller";
-import { requireAuth, requireJwtAuth } from "../middleware/require-auth";
+import { requireJwtSessionAuth } from "../middleware/require-auth";
 import {
   validateBody,
   validateParams,
@@ -22,31 +25,41 @@ import {
 
 export const eventsRouter = Router();
 
+// Public reads: upcoming events never include a past date/time.
+eventsRouter.get("/upcoming", getUpcomingEvents);
+eventsRouter.get("/my-events", requireJwtSessionAuth, getMyEvents);
+eventsRouter.get("/joined", requireJwtSessionAuth, getJoinedEvents);
+eventsRouter.get(
+  "/:id/participation",
+  requireJwtSessionAuth,
+  validateParams(eventIdParamsSchema),
+  getEventParticipation,
+);
+eventsRouter.get("/:id", validateParams(eventIdParamsSchema), getEvent);
+
+// Every event mutation requires a Better Auth-verified Bearer JWT.
 eventsRouter.post(
   "/",
-  requireAuth,
+  requireJwtSessionAuth,
   validateBody(createEventSchema),
   createEvent,
 );
-
-eventsRouter.get("/my-events", requireJwtAuth, getMyEvents);
-eventsRouter.get("/joined", requireJwtAuth, getJoinedEvents);
 eventsRouter.post(
   "/:id/join",
-  requireJwtAuth,
+  requireJwtSessionAuth,
   validateParams(eventIdParamsSchema),
   joinEvent,
 );
 eventsRouter.patch(
   "/:id",
-  requireJwtAuth,
+  requireJwtSessionAuth,
   validateParams(eventIdParamsSchema),
   validateBody(updateEventSchema),
   updateEvent,
 );
 eventsRouter.delete(
   "/:id",
-  requireJwtAuth,
+  requireJwtSessionAuth,
   validateParams(eventIdParamsSchema),
   deleteEvent,
 );

@@ -1,4 +1,7 @@
 import { Router } from "express";
+import { getJoinedEvents } from "../controllers/joined-events.controller";
+import { requireJwtSessionAuth } from "../middleware/require-auth";
 
-// Reserved for the joined-events module. No routes are defined yet.
 export const joinedEventsRouter = Router();
+
+joinedEventsRouter.get("/", requireJwtSessionAuth, getJoinedEvents);

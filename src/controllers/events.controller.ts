@@ -3,7 +3,10 @@ import {
   deleteOwnedEvent,
   findEventById,
   findEventsByCreator,
+  findUpcomingEvents,
+  getEventStartsAt,
   isEventOwnedBy,
+  isEventUpcoming,
   updateOwnedEvent,
   type EventCreator,
   type EventDocument,
@@ -23,8 +26,52 @@ function eventResponse(event: EventDocument) {
   return {
     ...event,
     _id: event._id.toHexString(),
+    startsAt: getEventStartsAt(event),
+    isUpcoming: isEventUpcoming(event),
   };
 }
+
+function publicEventResponse(event: EventDocument) {
+  return {
+    _id: event._id.toHexString(),
+    title: event.title,
+    description: event.description,
+    category: event.category,
+    imageUrl: event.imageUrl,
+    location: event.location,
+    eventDate: event.eventDate,
+    eventTime: event.eventTime,
+    startsAt: getEventStartsAt(event),
+    isUpcoming: isEventUpcoming(event),
+  };
+}
+
+export const getUpcomingEvents = asyncHandler(async (req, res) => {
+  const rawLimit = req.query.limit;
+  if (rawLimit !== undefined && typeof rawLimit !== "string") {
+    throw new AppError(400, "INVALID_LIMIT", "Limit must be a single integer.");
+  }
+  const parsedLimit = rawLimit === undefined ? 100 : Number(rawLimit);
+  if (
+    (!Number.isInteger(parsedLimit) || parsedLimit < 1 || parsedLimit > 100)
+  ) {
+    throw new AppError(400, "INVALID_LIMIT", "Limit must be an integer from 1 to 100.");
+  }
+
+  const events = await findUpcomingEvents(new Date(), parsedLimit);
+  res.setHeader("Cache-Control", "no-store");
+  res.json({ data: { events: events.map(publicEventResponse) } });
+});
+
+export const getEvent = asyncHandler(async (req, res) => {
+  const event = await findEventById(req.params.id as string);
+  if (!event) {
+    throw new AppError(404, "EVENT_NOT_FOUND", "Event not found.");
+  }
+
+  res.setHeader("Cache-Control", "no-store");
+  res.json({ data: { event: publicEventResponse(event) } });
+});
 
 function assertEventExistsAndIsOwned(
   event: EventDocument | null,
@@ -64,7 +111,7 @@ export const updateEvent = asyncHandler(async (req, res) => {
   const existingEvent = await findEventById(id);
   assertEventExistsAndIsOwned(existingEvent, creator);
 
-  const event = await updateOwnedEvent(id, req.body, creator);
+  const event = await updateOwnedEvent(id, req.body, creator, existingEvent);
   if (!event) {
     const currentEvent = await findEventById(id);
     assertEventExistsAndIsOwned(currentEvent, creator);

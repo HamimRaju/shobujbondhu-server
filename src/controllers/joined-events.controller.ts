@@ -1,9 +1,12 @@
 import {
   addEventParticipant,
+  countEventParticipants,
   findJoinedEvents,
+  hasJoinedEvent,
 } from "../models/event-participant.model";
 import {
   findEventById,
+  getEventStartsAt,
   isEventUpcoming,
 } from "../models/event.model";
 import type { AuthContext } from "../middleware/require-auth";
@@ -54,8 +57,34 @@ export const joinEvent = asyncHandler(async (req, res) => {
   });
 });
 
+export const getEventParticipation = asyncHandler(async (req, res) => {
+  const { id } = req.params as { id: string };
+  const event = await findEventById(id);
+  if (!event) {
+    throw new AppError(404, "EVENT_NOT_FOUND", "Event not found.");
+  }
+
+  const identity = participantIdentity(res);
+  const [joined, participantCount] = await Promise.all([
+    hasJoinedEvent(event._id, identity),
+    countEventParticipants(event._id),
+  ]);
+
+  res.setHeader("Cache-Control", "no-store");
+  res.json({
+    data: {
+      participation: {
+        joined,
+        participantCount,
+        isUpcoming: isEventUpcoming(event),
+      },
+    },
+  });
+});
+
 export const getJoinedEvents = asyncHandler(async (_req, res) => {
   const records = await findJoinedEvents(participantIdentity(res));
+  res.setHeader("Cache-Control", "no-store");
   res.json({
     data: {
       joinedEvents: records.map(({ event, joinedAt }) => ({
@@ -63,6 +92,7 @@ export const getJoinedEvents = asyncHandler(async (_req, res) => {
         event: {
           ...event,
           _id: event._id.toHexString(),
+          startsAt: getEventStartsAt(event),
         },
       })),
     },
