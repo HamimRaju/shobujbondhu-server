@@ -125,12 +125,14 @@ export async function findUpcomingEvents(
   now = new Date(),
   limit?: number,
 ): Promise<EventDocument[]> {
-  return getDb()
+  const cursor = getDb()
     .collection<EventDocument>("events")
     .find({ startsAt: { $gt: now } })
-    .sort({ startsAt: 1, _id: 1 })
-    .limit(limit ?? 100)
-    .toArray();
+    .sort({ startsAt: 1, _id: 1 });
+
+  // The home page passes six explicitly; the public events page lists every
+  // upcoming event when it omits the query limit.
+  return (limit === undefined ? cursor : cursor.limit(limit)).toArray();
 }
 
 export async function updateOwnedEvent(

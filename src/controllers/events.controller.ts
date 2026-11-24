@@ -51,8 +51,9 @@ export const getUpcomingEvents = asyncHandler(async (req, res) => {
   if (rawLimit !== undefined && typeof rawLimit !== "string") {
     throw new AppError(400, "INVALID_LIMIT", "Limit must be a single integer.");
   }
-  const parsedLimit = rawLimit === undefined ? 100 : Number(rawLimit);
+  const parsedLimit = rawLimit === undefined ? undefined : Number(rawLimit);
   if (
+    parsedLimit !== undefined &&
     (!Number.isInteger(parsedLimit) || parsedLimit < 1 || parsedLimit > 100)
   ) {
     throw new AppError(400, "INVALID_LIMIT", "Limit must be an integer from 1 to 100.");
