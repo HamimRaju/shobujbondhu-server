@@ -1,5 +1,5 @@
 import { Db, MongoClient } from "mongodb";
-import { env } from "./env";
+import { env } from "./env.js";
 
 let client: MongoClient | null = null;
 let database: Db | null = null;

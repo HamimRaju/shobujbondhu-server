@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createEventSchema, updateEventSchema } from "../validators/event.validator";
+import { createEventSchema, updateEventSchema } from "../validators/event.validator.js";
 
 function todayInBangladesh() {
   return new Intl.DateTimeFormat("en-CA", {

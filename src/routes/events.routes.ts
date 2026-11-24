@@ -6,22 +6,22 @@ import {
   getMyEvents,
   getUpcomingEvents,
   updateEvent,
-} from "../controllers/events.controller";
+} from "../controllers/events.controller.js";
 import {
   getEventParticipation,
   getJoinedEvents,
   joinEvent,
-} from "../controllers/joined-events.controller";
-import { requireJwtSessionAuth } from "../middleware/require-auth";
+} from "../controllers/joined-events.controller.js";
+import { requireJwtSessionAuth } from "../middleware/require-auth.js";
 import {
   validateBody,
   validateParams,
-} from "../middleware/validate-request";
+} from "../middleware/validate-request.js";
 import {
   createEventSchema,
   eventIdParamsSchema,
   updateEventSchema,
-} from "../validators/event.validator";
+} from "../validators/event.validator.js";
 
 export const eventsRouter = Router();
 

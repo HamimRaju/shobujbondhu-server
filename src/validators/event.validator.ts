@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { EVENT_CATEGORIES } from "../constants/event-categories";
-import { objectIdSchema } from "./common";
+import { EVENT_CATEGORIES } from "../constants/event-categories.js";
+import { objectIdSchema } from "./common.js";
 
 const BANGLADESH_OFFSET = "+06:00";
 

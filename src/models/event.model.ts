@@ -1,11 +1,11 @@
 import { ObjectId, type Filter } from "mongodb";
-import { getDb } from "../config/db";
-import { AppError } from "../utils/app-error";
-import type { EventCategory } from "../constants/event-categories";
+import { getDb } from "../config/db.js";
+import { AppError } from "../utils/app-error.js";
+import type { EventCategory } from "../constants/event-categories.js";
 import type {
   CreateEventInput,
   UpdateEventInput,
-} from "../validators/event.validator";
+} from "../validators/event.validator.js";
 
 export type EventDocument = {
   _id: ObjectId;

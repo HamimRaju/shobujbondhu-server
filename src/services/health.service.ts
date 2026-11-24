@@ -1,6 +1,6 @@
-import { getDb } from "../config/db";
-import { env } from "../config/env";
-import type { DatabaseStatus, HealthStatus } from "../types";
+import { getDb } from "../config/db.js";
+import { env } from "../config/env.js";
+import type { DatabaseStatus, HealthStatus } from "../types/index.js";
 
 async function checkDatabase(): Promise<DatabaseStatus> {
   try {

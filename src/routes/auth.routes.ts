@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth, type AuthContext } from "../middleware/require-auth";
+import { requireAuth, type AuthContext } from "../middleware/require-auth.js";
 
 export const authRouter = Router();
 

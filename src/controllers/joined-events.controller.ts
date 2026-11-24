@@ -3,15 +3,15 @@ import {
   countEventParticipants,
   findJoinedEvents,
   hasJoinedEvent,
-} from "../models/event-participant.model";
+} from "../models/event-participant.model.js";
 import {
   findEventById,
   getEventStartsAt,
   isEventUpcoming,
-} from "../models/event.model";
-import type { AuthContext } from "../middleware/require-auth";
-import { AppError } from "../utils/app-error";
-import { asyncHandler } from "../utils/async-handler";
+} from "../models/event.model.js";
+import type { AuthContext } from "../middleware/require-auth.js";
+import { AppError } from "../utils/app-error.js";
+import { asyncHandler } from "../utils/async-handler.js";
 
 function participantIdentity(res: {
   locals: Record<string, unknown>;

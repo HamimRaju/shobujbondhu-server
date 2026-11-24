@@ -1,8 +1,8 @@
 import type { ErrorRequestHandler, RequestHandler } from "express";
 import { ZodError } from "zod";
-import { isProduction } from "../config/env";
-import type { ApiErrorBody } from "../types";
-import { AppError } from "../utils/app-error";
+import { isProduction } from "../config/env.js";
+import type { ApiErrorBody } from "../types/index.js";
+import { AppError } from "../utils/app-error.js";
 
 export const notFoundHandler: RequestHandler = (_req, _res, next) => {
   next(new AppError(404, "NOT_FOUND", "The requested route does not exist."));

@@ -2,12 +2,12 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import { toNodeHandler } from "better-auth/node";
-import { getAuth } from "./config/auth";
-import { env } from "./config/env";
-import { errorHandler, notFoundHandler } from "./middleware/error-handler";
-import { authRouter } from "./routes/auth.routes";
-import { apiRouter } from "./routes";
-import { AppError } from "./utils/app-error";
+import { getAuth } from "./config/auth.js";
+import { env } from "./config/env.js";
+import { errorHandler, notFoundHandler } from "./middleware/error-handler.js";
+import { authRouter } from "./routes/auth.routes.js";
+import { apiRouter } from "./routes/index.js";
+import { AppError } from "./utils/app-error.js";
 
 export function createApp() {
   const app = express();

@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import { fromNodeHeaders } from "better-auth/node";
-import { getAuth, type AuthSession } from "../config/auth";
-import { AppError } from "../utils/app-error";
+import { getAuth, type AuthSession } from "../config/auth.js";
+import { AppError } from "../utils/app-error.js";
 
 export type AuthContext = {
   user: {

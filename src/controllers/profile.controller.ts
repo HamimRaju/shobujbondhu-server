@@ -1,9 +1,9 @@
 import { fromNodeHeaders } from "better-auth/node";
 import type { Request, Response } from "express";
-import { getAuth } from "../config/auth";
-import type { AuthContext } from "../middleware/require-auth";
-import { AppError } from "../utils/app-error";
-import { asyncHandler } from "../utils/async-handler";
+import { getAuth } from "../config/auth.js";
+import type { AuthContext } from "../middleware/require-auth.js";
+import { AppError } from "../utils/app-error.js";
+import { asyncHandler } from "../utils/async-handler.js";
 
 function profileFromResponse(res: Response) {
   const { user } = res.locals.auth as AuthContext;

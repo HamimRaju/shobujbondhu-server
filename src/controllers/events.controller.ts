@@ -10,10 +10,10 @@ import {
   updateOwnedEvent,
   type EventCreator,
   type EventDocument,
-} from "../models/event.model";
-import { asyncHandler } from "../utils/async-handler";
-import type { AuthContext } from "../middleware/require-auth";
-import { AppError } from "../utils/app-error";
+} from "../models/event.model.js";
+import { asyncHandler } from "../utils/async-handler.js";
+import type { AuthContext } from "../middleware/require-auth.js";
+import { AppError } from "../utils/app-error.js";
 
 function creatorFromResponse(res: {
   locals: Record<string, unknown>;

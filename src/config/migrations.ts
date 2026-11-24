@@ -1,4 +1,4 @@
-import { getDb } from "./db";
+import { getDb } from "./db.js";
 
 /**
  * Bring older records onto the current date/time representation and establish

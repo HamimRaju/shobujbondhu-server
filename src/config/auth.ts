@@ -2,8 +2,8 @@ import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { betterAuth } from "better-auth";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { jwt } from "better-auth/plugins";
-import { getDb } from "./db";
-import { env, isProduction } from "./env";
+import { getDb } from "./db.js";
+import { env, isProduction } from "./env.js";
 
 const googleProvider =
   env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET

@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { eventsRouter } from "./events.routes";
-import { healthRouter } from "./health.routes";
-import { joinedEventsRouter } from "./joined-events.routes";
-import { profileRouter } from "./profile.routes";
+import { eventsRouter } from "./events.routes.js";
+import { healthRouter } from "./health.routes.js";
+import { joinedEventsRouter } from "./joined-events.routes.js";
+import { profileRouter } from "./profile.routes.js";
 
 export const apiRouter = Router();
 

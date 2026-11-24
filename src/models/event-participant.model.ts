@@ -1,6 +1,6 @@
 import { ObjectId, type Filter } from "mongodb";
-import { getDb } from "../config/db";
-import type { EventDocument } from "./event.model";
+import { getDb } from "../config/db.js";
+import type { EventDocument } from "./event.model.js";
 
 export type ParticipantIdentity = {
   email: string;

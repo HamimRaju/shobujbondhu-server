@@ -1,8 +1,8 @@
 import type { Server } from "node:http";
-import { createApp } from "./app";
-import { closeDatabase, connectToDatabase } from "./config/db";
-import { env } from "./config/env";
-import { prepareEventCollections } from "./config/migrations";
+import { createApp } from "./app.js";
+import { closeDatabase, connectToDatabase } from "./config/db.js";
+import { env } from "./config/env.js";
+import { prepareEventCollections } from "./config/migrations.js";
 
 let server: Server | undefined;
 
