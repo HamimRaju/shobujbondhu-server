@@ -59,7 +59,13 @@ export function createApp() {
 
   // Better Auth must receive the raw request body for its own parsing.
   app.use("/api/auth", authRouter);
-  app.all("/api/auth/{*path}", toNodeHandler(getAuth()));
+  app.all("/api/auth/{*path}", (req, res, next) => {
+    try {
+      return toNodeHandler(getAuth())(req, res);
+    } catch (error) {
+      next(error);
+    }
+  });
 
   app.use(express.json({ limit: "100kb" }));
 
