@@ -3,6 +3,7 @@ import { z } from "zod";
 const profileImageUrlSchema = z
   .string()
   .trim()
+  .max(2048, "Image URL must be 2,048 characters or fewer.")
   .url("Image must be a valid URL.")
   .refine((value) => {
     try {

@@ -49,28 +49,64 @@ function createAuthInstance() {
     },
     hooks: {
       before: createAuthMiddleware(async (context) => {
-        if (context.path !== "/sign-up/email") return;
+        const isSignUp = context.path === "/sign-up/email";
+        const isProfileUpdate = context.path === "/update-user";
+        if (!isSignUp && !isProfileUpdate) return;
 
         const body = context.body;
-        if (typeof body.name !== "string" || body.name.trim().length === 0) {
+        if (
+          (isSignUp || body.name !== undefined) &&
+          (typeof body.name !== "string" || body.name.trim().length === 0)
+        ) {
           throw new APIError("BAD_REQUEST", {
             message: "Name is required.",
           });
         }
+        if (typeof body.name === "string" && body.name.trim().length > 120) {
+          throw new APIError("BAD_REQUEST", {
+            message: "Name must be 120 characters or fewer.",
+          });
+        }
 
         if (
+          body.image !== undefined &&
+          body.image !== null &&
+          body.image !== ""
+        ) {
+          if (typeof body.image !== "string" || body.image.length > 2048) {
+            throw new APIError("BAD_REQUEST", {
+              message: "Profile photo must be a valid HTTP or HTTPS URL.",
+            });
+          }
+          try {
+            const imageURL = new URL(body.image);
+            if (
+              (imageURL.protocol !== "http:" && imageURL.protocol !== "https:") ||
+              imageURL.username ||
+              imageURL.password
+            ) {
+              throw new Error("Invalid photo URL");
+            }
+          } catch {
+            throw new APIError("BAD_REQUEST", {
+              message: "Profile photo must be a valid HTTP or HTTPS URL.",
+            });
+          }
+        }
+
+        if (isSignUp && (
           typeof body.password !== "string" ||
           body.password.length < 6 ||
           !/[A-Z]/.test(body.password) ||
           !/[a-z]/.test(body.password)
-        ) {
+        )) {
           throw new APIError("BAD_REQUEST", {
             message:
               "Password must be at least 6 characters and contain an uppercase and a lowercase letter.",
           });
         }
 
-        body.name = body.name.trim();
+        if (typeof body.name === "string") body.name = body.name.trim();
       }),
     },
     onAPIError: {

@@ -26,9 +26,15 @@ async function verifyBearerUser(
     throw new AppError(401, "UNAUTHORIZED", "A valid Bearer JWT is required.");
   }
 
-  const { payload } = await getAuth().api.verifyJWT({
-    body: { token: bearerMatch[1] },
-  });
+  let payload;
+  try {
+    ({ payload } = await getAuth().api.verifyJWT({
+      body: { token: bearerMatch[1] },
+    }));
+  } catch {
+    throw new AppError(401, "INVALID_JWT", "The Bearer JWT is invalid or expired.");
+  }
+
   if (
     !payload ||
     typeof payload.sub !== "string" ||
