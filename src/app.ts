@@ -2,12 +2,30 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import { toNodeHandler } from "better-auth/node";
+import { connectToDatabase } from "./config/db.js";
 import { getAuth } from "./config/auth.js";
 import { env } from "./config/env.js";
+import { prepareEventCollections } from "./config/migrations.js";
 import { errorHandler, notFoundHandler } from "./middleware/error-handler.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { apiRouter } from "./routes/index.js";
 import { AppError } from "./utils/app-error.js";
+
+let databaseReady: Promise<void> | undefined;
+
+export function initializeDatabase() {
+  if (!databaseReady) {
+    databaseReady = (async () => {
+      await connectToDatabase();
+      await prepareEventCollections();
+    })().catch((error: unknown) => {
+      databaseReady = undefined;
+      throw error;
+    });
+  }
+
+  return databaseReady;
+}
 
 export function createApp() {
   const app = express();
@@ -30,6 +48,15 @@ export function createApp() {
     }),
   );
 
+  // Vercel invokes the exported Express app directly instead of server.ts.
+  // Initialize lazily for serverless requests; local startup awaits this first.
+  app.use((_req, _res, next) => {
+    void initializeDatabase().then(
+      () => next(),
+      (error: unknown) => next(error),
+    );
+  });
+
   // Better Auth must receive the raw request body for its own parsing.
   app.use("/api/auth", authRouter);
   app.all("/api/auth/{*path}", toNodeHandler(getAuth()));
@@ -43,3 +70,7 @@ export function createApp() {
 
   return app;
 }
+
+export const app = createApp();
+
+export default app;

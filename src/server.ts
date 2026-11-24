@@ -1,18 +1,16 @@
 import type { Server } from "node:http";
-import { createApp } from "./app.js";
-import { closeDatabase, connectToDatabase } from "./config/db.js";
+import { app, initializeDatabase } from "./app.js";
+import { closeDatabase } from "./config/db.js";
 import { env } from "./config/env.js";
-import { prepareEventCollections } from "./config/migrations.js";
 
 let server: Server | undefined;
 
 async function start() {
-  await connectToDatabase();
+  await initializeDatabase();
   console.log("MongoDB connected.");
-  await prepareEventCollections();
   console.log("Event collections ready.");
 
-  server = createApp().listen(env.PORT, () => {
+  server = app.listen(env.PORT, () => {
     console.log(`Server listening on port ${env.PORT} (${env.NODE_ENV}).`);
   });
 }
