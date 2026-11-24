@@ -24,6 +24,7 @@ export type JoinedEventSummary = {
   location: string;
   eventDate: Date;
   eventTime: string;
+  startsAt?: Date;
 };
 
 export type JoinedEventRecord = {
@@ -108,6 +109,22 @@ export async function addEventParticipant(
   }
 }
 
+export async function hasJoinedEvent(
+  eventId: ObjectId,
+  identity: ParticipantIdentity,
+): Promise<boolean> {
+  const collection = await getParticipantCollection();
+  return (await collection.countDocuments(
+    { eventId, ...participantOwnerFilter(identity) },
+    { limit: 1 },
+  )) > 0;
+}
+
+export async function countEventParticipants(eventId: ObjectId): Promise<number> {
+  const collection = await getParticipantCollection();
+  return collection.countDocuments({ eventId });
+}
+
 export async function findJoinedEvents(
   identity: ParticipantIdentity,
 ): Promise<JoinedEventRecord[]> {
@@ -146,6 +163,7 @@ export async function findJoinedEvents(
             location: "$event.location",
             eventDate: "$event.eventDate",
             eventTime: "$event.eventTime",
+            startsAt: "$event.startsAt",
           },
         },
       },
